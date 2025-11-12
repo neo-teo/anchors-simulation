@@ -1,30 +1,12 @@
 import { Spirit } from './Spirit.js';
 import { Link } from './Link.js';
 import { ConnectionManager } from './ConnectionManager.js';
-
-function generateName() {
-    const letters = "bcdfghjklmnpqrstvwxyz";
-    const vowels = "aeiou";
-    let name = "";
-    let vowelNext = Math.random() < 0.5;
-    const numLetters = Math.random() < 0.5 ? 3 : 4; // e.g. "mel", "tarn"
-    for (let i = 0; i < numLetters; i++) {
-        if (!vowelNext) name += letters[Math.floor(Math.random() * letters.length)];
-        else name += vowels[Math.floor(Math.random() * vowels.length)];
-
-        vowelNext = !vowelNext;
-    }
-    return name.charAt(0).toUpperCase() + name.slice(1);
-}
+import { generateName } from './utils/name.js';
 
 export class Web {
     spirits = [];
-    seed = [
-        new Spirit(0, 0, 0),
-        new Spirit(0, 0, 0),
-        new Spirit(0, 0, 0),
-        new Spirit(0, 0, 0),
-    ]
+    seed = [];
+
     connectionManager = new ConnectionManager();
     lastSpawnTime = 0;
     spawnInterval = 5000; // 5 seconds
@@ -35,8 +17,27 @@ export class Web {
         this.p = p;
         this.centerX = centerX;
         this.centerY = centerY;
-        this.spirits.push(new Spirit(generateName(), centerX, centerY, 0));
+        this.seed = this.createSeedSpirits(12, 250, centerX, centerY);
+        this.spirits.push(...this.seed);
         this.lastSpawnTime = 0;
+    }
+
+    createSeedSpirits(count, radius, centerX, centerY) {
+        const spirits = [];
+        const angleStep = (Math.PI * 2) / count;
+
+        for (let i = 0; i < count; i++) {
+            const angle = angleStep * i;
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+
+            // const letter = String.fromCharCode(97 + i); // 97 is 'a' in ASCII
+            // spirits.push(new Spirit(letter, x, y, 0));
+
+            spirits.push(new Spirit(generateName(), x, y, 0));
+        }
+
+        return spirits;
     }
 
     addSpirit(currentTime) {

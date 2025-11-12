@@ -4,7 +4,7 @@ export class ConnectionManager {
     connections = [];
     connectionMap = new Map(); // spirit -> Set of connections
     hallOfFame = []; // Top 5 longest friendships
-    matchDistance = 150;
+    matchDistance = 50;
     stickChance = 0.5;
     disconnectCheckInterval = 5000;
     disconnectChance = 0.2;
